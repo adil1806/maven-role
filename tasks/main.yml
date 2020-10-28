@@ -11,18 +11,14 @@
    - name: Checking untar file exist or not.
      stat:
        path: "{{ install_path }}/apache-maven-{{ maven_version }}"
-     register: untar
-
-   - name: Renaming the maven directory
-     shell: cp -r {{ install_path }}/apache-maven-{{ maven_version }} /opt/maven
-     when: untar.stat.exists == true
+     register: status
 
    - name: Creating sym link for maven
      file:
-       src: "{{ install_path }}/maven"
-       dest: "{{ install_path }}"/maven.current
+       src: "{{ install_path }}/apache-maven-{{ maven_version }}"
+       dest: "{{ install_path }}/maven.current"
        owner: "{{ install_account }}"
        group: "{{ install_group }}"
        mode: "{{ mode }}"
        state: link
-
+     when: status.stat.exists == true
