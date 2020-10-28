@@ -1,19 +1,28 @@
 ---
-   - name: 1.Downloding the maven tar file and unarchive
+   - name: Downloding the maven source file and unarchive it.
      unarchive:
-        src: "http://www.apache.org/dist/maven/maven-{{ maven_major }}/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
-        dest: "{{ maven_home_parent_directory }}"
+        src: "{{ url }}"
+        dest: "{{ install_path }}"
+        owner: "{{ install_account }}"
+        group: "{{ install_group }}"
+        mode: "{{ mode }}"
         copy: no
 
-   - name: 3.Renaming the maven unzip folder.
-     command: cp -r {{ maven_home_parent_directory }}/apache-maven-{{ maven_version }} /opt/maven
+   - name: Checking untar file exist or not.
+     stat:
+       path: "{{ install_path }}/apache-maven-{{ maven_version }}"
+     register: untar
 
-   - name: 5.Setting path for maven
-     blockinfile:
-        path: /etc/profile
-        block: |
-          export M2_HOME=/opt/maven 
-          export PATH=${M2_HOME}/bin:${PATH}
+   - name: Renaming the maven directory
+     shell: cp -r {{ install_path }}/apache-maven-{{ maven_version }} /opt/maven
+     when: untar.stat.exists == true
 
-   - name: 6.Source the /etc/profile
-     shell: "source /etc/profile"
+   - name: Creating sym link for maven
+     file:
+       src: "{{ install_path }}/maven"
+       dest: "{{ install_path }}"/maven.current
+       owner: "{{ install_account }}"
+       group: "{{ install_group }}"
+       mode: "{{ mode }}"
+       state: link
+
