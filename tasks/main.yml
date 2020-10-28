@@ -1,4 +1,9 @@
 ---
+   - name: Installing OpenJDk
+     apt:
+      name: openjdk-8-jre
+      state: present
+
    - name: Downloding the maven source file and unarchive it.
      unarchive:
         src: "{{ url }}"
@@ -22,10 +27,10 @@
        mode: "{{ mode }}"
        state: link
      when: status.stat.exists == true
-    - name: softlink of maven_version
-      shell: "{{ item}}"
-       args:
-         executable: /bin/bash
-      with_items:
-           - sudo update-alternatives --install "/usr/bin/mvn" "mvn" "{{ install_path }}/maven.current/bin/mvn" 0
-           - sudo update-alternatives --set mvn "{{ install_path }}/maven.current/bin/mvn"
+
+   - name: setting path for maven
+     blockinfile:
+        path: /etc/profile
+        block: |
+          export M2_HOME="{{ install_path }}/maven.current"
+          export PATH=${M2_HOME}/bin:${PATH}

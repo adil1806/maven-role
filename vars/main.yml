@@ -3,6 +3,6 @@ major_version: 3
 maven_version: 3.6.3
 install_path: /opt
 url: http://www.apache.org/dist/maven/maven-{{ major_version }}/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz
-install_account: ubuntu
-install_group: ubuntu
-mode: 644
+install_account: root
+install_group: root
+mode: 777
